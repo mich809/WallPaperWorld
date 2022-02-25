@@ -41,6 +41,19 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+		
+		<dependency>
+		    <groupId>io.awspring.cloud</groupId>
+		    <artifactId>spring-cloud-aws-context</artifactId>
+		    <version>2.4.0</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>io.awspring.cloud</groupId>
+		    <artifactId>spring-cloud-aws-autoconfigure</artifactId>
+		    <version>2.4.0</version>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
