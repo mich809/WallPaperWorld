@@ -24,12 +24,10 @@ public class Picture {
 	private long id;	
 	private String userId;
 	private Integer favorites;
-	private Integer viewCount;
-	
+	private Integer viewCount;	
 	@ElementCollection(targetClass=String.class)
 	private Set<String> tags;
-	private String url;
-	private String category;
+	private String pictureUrl;
 	
 	
 
