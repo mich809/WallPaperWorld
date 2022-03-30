@@ -2,10 +2,12 @@ package com.CaridadMichael.WallPaperWorld.repository;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.CaridadMichael.WallPaperWorld.model.User;
+import com.CaridadMichael.WallPaperWorld.model.AppUser;
 
 
 
-public interface UserRepository extends CrudRepository<User, Long>{
+public interface UserRepository extends CrudRepository<AppUser, Long>{
+	
+	AppUser findByUsername(String username);
 
 }
