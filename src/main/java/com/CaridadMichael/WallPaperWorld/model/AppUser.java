@@ -3,12 +3,12 @@ package com.CaridadMichael.WallPaperWorld.model;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 
-import org.springframework.data.annotation.Id;
-
+import javax.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,7 +24,7 @@ public class AppUser {
 	private long id;	
 	private String username;
 	private String password;
-	private List<String> pictureHistory;
+	@ElementCollection(targetClass=String.class)
 	private Set<String> likedPictures;
  
 }
