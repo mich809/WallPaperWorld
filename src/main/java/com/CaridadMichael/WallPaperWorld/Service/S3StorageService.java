@@ -25,7 +25,7 @@ public class S3StorageService {
 	
 	
 
-	public String uploadFile(String fileName, MultipartFile file) {	
+	public String uploadPicture(String fileName, MultipartFile file) {	
 		
 		var fileNameExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
 		var key = fileName +"."+ fileNameExtension;
