@@ -19,13 +19,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.CaridadMichael.WallPaperWorld.utils.JwtUtil;
 
 import io.jsonwebtoken.ExpiredJwtException;
-import lombok.extern.slf4j.Slf4j;
+
 
 
 
 
 @Component
-@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 	
 	  @Autowired
@@ -33,7 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	  
 	    @Override
 		protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-			  return new AntPathMatcher().match("/api/user/register", request.getServletPath());
+			  return new AntPathMatcher().match("/register", request.getServletPath());
 		}
 
 	  @Autowired
@@ -42,11 +41,12 @@ public class JwtFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		log.info("in jwt filter");		
+			
 		
-	    final String requestTokenHeader = request.getHeader("Authorization");
-
-
+    final String requestTokenHeader = request.getHeader("Authorization");
+        
+       
+        
         String username = null;
         String jwtToken = null;
 
@@ -75,7 +75,9 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
+
+    }
 		
 	}
 
-}
+
