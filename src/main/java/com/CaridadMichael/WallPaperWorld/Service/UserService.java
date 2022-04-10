@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.CaridadMichael.WallPaperWorld.config.CustomUserDetailsService;
 import com.CaridadMichael.WallPaperWorld.dto.UserDTO;
 import com.CaridadMichael.WallPaperWorld.model.AppUser;
+import com.CaridadMichael.WallPaperWorld.model.Picture;
+import com.CaridadMichael.WallPaperWorld.repository.PictureRepository;
 import com.CaridadMichael.WallPaperWorld.repository.UserRepository;
 import com.CaridadMichael.WallPaperWorld.utils.AuthenticationResponse;
 import com.CaridadMichael.WallPaperWorld.utils.JwtUtil;
@@ -37,10 +40,16 @@ public class UserService  {
 
     @Autowired
 	private  UserRepository userRepo;	
+    
+    @Autowired
+	private  PictureRepository pictureRepo;	    
+    
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
     @Autowired
     private JwtUtil jwtUtil;
+    
     @Autowired
     private AuthenticationManager authenticationManager;
     
@@ -65,16 +74,6 @@ public class UserService  {
 			return  new ResponseEntity<String>("User "+ newUser.getUsername() + " registered", HttpStatus.CREATED);
 		}
 		
-		private AppUser getCurrentUser() {
-			String username =  Security
-		}
-		
-		
-		
-		
-		
-		
-		
 		
 		
 		
@@ -91,7 +90,7 @@ public class UserService  {
 		
 		
 		
-		private void authenticate(UserDTO user) throws Exception {
+		 private void authenticate(UserDTO user) throws Exception {			
 		       try {
 		            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword()));
 		        } 
@@ -99,6 +98,43 @@ public class UserService  {
 		           throw new Exception("INVALID_CREDENTIALS", e);
 		        }
 		    }
+		 
+		 public void addToFavorites(String username, long pictureID) {
+			 AppUser appUser = getUserByUsername(username);
+			 Picture picture = getPictureByID(pictureID);	
+			 picture.setFavorites(picture.getFavorites()+1);
+			 appUser.addPicture(picture);
+			 
+			 userRepo.save(appUser);
+			 pictureRepo.save(picture);
+			 
+		 }
+		 
+		 public void removeFromFavorites(String username , long pictureID) {
+			 AppUser appUser = getUserByUsername(username);
+			 Picture picture = getPictureByID(pictureID);	
+			 picture.setFavorites(picture.getFavorites()-1);
+			 appUser.removePicture(picture);
+			 
+			 userRepo.save(appUser);
+			 pictureRepo.save(picture);
+			 
+		 }
+		 
+		 public Iterable<Picture> getFavorites(String username) {
+			 AppUser appUser = getUserByUsername(username);
+			 return appUser.getFavoritePictures();
+			
+			 
+		 }
+		 
+		 public AppUser getUserByUsername(String username) {
+				return userRepo.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("Cannot find username: "+ username));
+		}
+		 
+		 private Picture getPictureByID(long id) {
+				return pictureRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Cannot find picture by id: "+ id));
+		}
 	
 	
 	
