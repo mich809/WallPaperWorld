@@ -32,7 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	  
 	    @Override
 		protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-			  return new AntPathMatcher().match("/register", request.getServletPath());
+			  return new AntPathMatcher().match("api/user/register", request.getServletPath());
 		}
 
 	  @Autowired
