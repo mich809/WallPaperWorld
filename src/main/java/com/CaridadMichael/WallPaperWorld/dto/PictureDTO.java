@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PictureDTO {
-	private long id;	
+	private String pictureName;
 	private String url;
-	private String userId;
+	private String uploadedBy;
 	private Integer favorites;
 	private Integer viewCount;
 	@ElementCollection(targetClass=String.class)
