@@ -3,12 +3,14 @@ package com.CaridadMichael.WallPaperWorld.config;
 
 
 
+
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,6 +28,8 @@ import org.springframework.web.filter.CorsFilter;
 
 
 
+
+
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
@@ -34,6 +38,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	   
 	   @Autowired
 	   private JwtFilter jwtFilter;
+	   
+
+	 
 
 
 
@@ -55,9 +62,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {			 
 				     http.cors();
 			         http.csrf().disable()
-	                .authorizeRequests().antMatchers( HttpMethod.POST,"api/**").permitAll()
+			        .authorizeRequests().antMatchers("/register","/authenticate").permitAll()
 	                .antMatchers(HttpHeaders.ALLOW).permitAll()
-	             
+	                .anyRequest().permitAll()           
 	                .and()
 	                .exceptionHandling().authenticationEntryPoint((request, response, authException) ->
 	  	             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
@@ -67,6 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 	}
+	
 	
 	
 	
