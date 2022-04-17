@@ -11,73 +11,53 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.CaridadMichael.WallPaperWorld.utils.JwtUtil;
 
-import io.jsonwebtoken.ExpiredJwtException;
-
-
-
-
+import io.jsonwebtoken.JwtException;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-	
-	  @Autowired
-	  private JwtUtil jwtUtil;
-	  
-	    @Override
-		protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-			  return new AntPathMatcher().match("api/user/register", request.getServletPath());
-		}
 
-	  @Autowired
-	  private CustomUserDetailsService customUserDetailService;
+	@Autowired
+	private JwtUtil jwtUtil;
+
+	@Autowired
+	private CustomUserDetailsService customUserDetailService;
+
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+		return new AntPathMatcher().match("api/user/register", request.getServletPath());
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-			
-		
-    final String requestTokenHeader = request.getHeader("Authorization");
-        
-       
-        
-        String username = null;
-        String jwtToken = null;
 
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
-            try {
-                username = jwtUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
-            } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
-            }
-        } else {
-            System.out.println("JWT token does not start with Bearer");
-        }
+		final String requestTokenHeader = request.getHeader("Authorization");
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+		if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ") && !requestTokenHeader.isBlank()) {
+			String jwt = requestTokenHeader.substring(7);
 
-            UserDetails userDetails = customUserDetailService.loadUserByUsername(username);
-
-            if (jwtUtil.validateToken(jwtToken, userDetails)) {
-
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            }
-        }
-        filterChain.doFilter(request, response);
-
-    }
-		
+			if (jwt == null || jwt.isBlank()) {
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token in Bearer Header");
+			} else
+				try {
+					String username = jwtUtil.getUsernameFromToken(jwt);
+					UserDetails userDetails = customUserDetailService.loadUserByUsername(username);
+					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+							userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
+					if (SecurityContextHolder.getContext().getAuthentication() == null) {
+						SecurityContextHolder.getContext().setAuthentication(authToken);
+					}
+				} catch (JwtException exc) {
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token");
+				}
+		}
+		filterChain.doFilter(request, response);
 	}
 
-
+}
