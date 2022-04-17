@@ -16,7 +16,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 
 @Component
-
 public class JwtUtil {
 	
 	@Value("${jwt.secret.key}")
@@ -52,7 +51,7 @@ public class JwtUtil {
     }
 
     public String generateToken(UserDetails userDetails) {
-    	
+
         Map<String, Object> claims = new HashMap<>();
 
         return Jwts.builder()
