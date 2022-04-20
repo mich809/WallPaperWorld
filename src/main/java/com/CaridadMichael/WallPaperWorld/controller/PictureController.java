@@ -1,8 +1,12 @@
 package com.CaridadMichael.WallPaperWorld.controller;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,11 +35,10 @@ public class PictureController {
 
 	@PostMapping("/addPicture")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Picture uploadPicture(@RequestParam("picture name") String pictureName,
-			@RequestParam("file") MultipartFile file,
+	public Picture uploadPicture(@RequestParam("file") MultipartFile file,
 			@CurrentSecurityContext(expression = "authentication.name") String username,
 			@RequestParam("tags") Set<String> pictureTags) {
-		return pictureService.uploadPicture(pictureName, file, username, pictureTags);
+		return pictureService.uploadPicture(file, username, pictureTags);
 
 	}
 
@@ -53,14 +56,29 @@ public class PictureController {
 
 	@GetMapping("/getPicturesByTag")
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody Iterable<Picture> getPicturesByTag(@RequestParam Set<String> tags) {
-		return pictureService.searchByTag(tags);
+	public @ResponseBody Page<Picture> getPicturesByTag(@RequestParam Set<String> tags, @RequestParam int pageNumber) {
+		Pageable pageable = PageRequest.of(pageNumber, 2);
+		return pictureService.searchByTag(tags, pageable);
 	}
 
 	@GetMapping("/getRandomPictures")
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody Iterable<Picture> getRandomPictures() {
-		return pictureService.getRandomPictures();
+	public @ResponseBody Page<Picture> getRandomPictures(@RequestParam int pageNumber) {
+		Pageable pageable = PageRequest.of(pageNumber, 2);
+		return pictureService.getRandomPictures(pageable);
+	}
+
+	@GetMapping("/getPicturesByDate")
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Page<Picture> getPicturesByDate(@RequestParam int pageNumber) {
+		Pageable pageable = PageRequest.of(pageNumber, 2);
+		return pictureService.getPicturesByDate(pageable);
+	}
+
+	@GetMapping("/homePictures")
+	@ResponseStatus(HttpStatus.OK)
+	public List<Picture> getFrontPagePictures() {
+		return pictureService.getFrontPagePictures();
 	}
 
 }

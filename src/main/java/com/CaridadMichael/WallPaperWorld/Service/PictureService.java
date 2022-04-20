@@ -2,10 +2,14 @@ package com.CaridadMichael.WallPaperWorld.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.CaridadMichael.WallPaperWorld.dto.PictureDTO;
@@ -29,22 +33,23 @@ public class PictureService {
 	@Autowired
 	private final PictureRepository pictureRepository;
 
-	public Picture uploadPicture(String pictureName, MultipartFile multipartFile, String username,
-			Set<String> pictureTags) {
+	public Picture uploadPicture(MultipartFile multipartFile, String username, Set<String> pictureTags) {
+
+		String extension = StringUtils.getFilenameExtension(multipartFile.getOriginalFilename());
+		var key = String.format("%s.%s", UUID.randomUUID(), extension);
 
 		AppUser user = getUserByUsername(username);
 		var picture = new Picture();
-		picture.setPictureUrl(s3Service.uploadPicture(pictureName, multipartFile));
-		picture.setPictureName(pictureName);
+		picture.setPictureUrl(s3Service.uploadPicture(key, multipartFile));
+		picture.setPictureName(key.substring(0, 8));
 		picture.setUploadedBy(username);
 		picture.setFavorites(0);
 		picture.setViewCount(0);
 		picture.setTags(pictureTags);
-
 		picture.setUser(user);
 		user.uploadedPictures(picture);
-
 		pictureRepository.save(picture);
+
 		return picture;
 
 	}
@@ -73,17 +78,25 @@ public class PictureService {
 
 	}
 
-	public List<Picture> searchByTag(Set<String> tags) {
-		return pictureRepository.findByTagsIn(tags);
+	public Page<Picture> searchByTag(Set<String> tags, Pageable pageable) {
+		return pictureRepository.findByTagsIn(tags, pageable);
 	}
 
-	public List<Picture> getRandomPictures() {
-		return pictureRepository.getRandomPictures();
+	public Page<Picture> getRandomPictures(Pageable pageable) {
+		return pictureRepository.getRandomPictures(pageable);
 	}
 
 	private AppUser getUserByUsername(String username) {
 		return userRepo.findByUsername(username)
 				.orElseThrow(() -> new IllegalArgumentException("Cannot find username: " + username));
+	}
+
+	public Page<Picture> getPicturesByDate(Pageable pageable) {
+		return pictureRepository.findAllByOrderByDateDesc(pageable);
+	}
+
+	public List<Picture> getFrontPagePictures() {
+		return pictureRepository.getFrontPagePictures();
 	}
 
 }
