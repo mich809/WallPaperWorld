@@ -1,7 +1,6 @@
-	package com.CaridadMichael.WallPaperWorld.Service;
+package com.CaridadMichael.WallPaperWorld.Service;
 
 import java.io.IOException;
-
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,39 +17,32 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class S3StorageService {
-	
-	private final AmazonS3Client awsS3Client;
-	public  final String bucketName = "wallpaperworld";
-	
-	
-	
 
-	public String uploadPicture(String fileName, MultipartFile file) {	
-		
+	private final AmazonS3Client awsS3Client;
+	public final String bucketName = "wallpaperworld";
+
+	public String uploadPicture(String fileName, MultipartFile file) {
+
 		var fileNameExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
-		var key = fileName +"."+ fileNameExtension;
+		var key = fileName + "." + fileNameExtension;
 		var metadata = new ObjectMetadata();
 		metadata.setContentLength(file.getSize());
-		
+
 		metadata.setContentLength(file.getSize());
 		metadata.setContentType(file.getContentType());
-		
-		
-		try {
-			awsS3Client.putObject(bucketName,key,file.getInputStream(),metadata);
 
-		}catch(IOException ioException) {
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An Exception occured while uploading file");
+		try {
+			awsS3Client.putObject(bucketName, key, file.getInputStream(), metadata);
+
+		} catch (IOException ioException) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+					"An Exception occured while uploading file");
 		}
-		
-		
-		awsS3Client.setObjectAcl(bucketName,key,CannedAccessControlList.PublicRead);
-		
+
+		awsS3Client.setObjectAcl(bucketName, key, CannedAccessControlList.PublicRead);
+
 		return awsS3Client.getResourceUrl(bucketName, key);
-		
-		
-		
-		
+
 	}
 
 }
