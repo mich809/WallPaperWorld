@@ -54,13 +54,8 @@ public class PictureService {
 
 	}
 
-	private Picture getPictureByID(long id) {
-		return pictureRepository.findById(id)
-				.orElseThrow(() -> new IllegalArgumentException("Cannot find picture by id: " + id));
-	}
-
-	public PictureDTO getPictureDetails(long id) {
-		Picture savedPicture = getPictureByID(id);
+	public PictureDTO getPictureDetails(String title) {
+		Picture savedPicture = pictureRepository.getPictureByPictureName(title);
 		PictureDTO pictureDTO = new PictureDTO();
 		pictureDTO.setUrl(savedPicture.getPictureUrl());
 		pictureDTO.setTags(savedPicture.getTags());
