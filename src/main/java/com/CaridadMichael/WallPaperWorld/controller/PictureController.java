@@ -44,8 +44,8 @@ public class PictureController {
 
 	@GetMapping("/getPictureDetails")
 	@ResponseStatus(HttpStatus.OK)
-	public PictureDTO getPictureDetails(@RequestParam long pictureId) {
-		return pictureService.getPictureDetails(pictureId);
+	public PictureDTO getPictureDetails(@RequestParam String title) {
+		return pictureService.getPictureDetails(title);
 	}
 
 	@PutMapping("/increaseViewCount")
