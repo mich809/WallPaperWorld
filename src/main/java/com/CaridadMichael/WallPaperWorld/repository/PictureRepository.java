@@ -28,6 +28,8 @@ public interface PictureRepository extends PagingAndSortingRepository<Picture, L
 	@Query(nativeQuery = true, value = "UPDATE Picture  set favorites = favorites - 1 WHERE id = :id")
 	void decreaseFavoriteCount(@Param("id") Long id);
 
+	Picture getPictureByPictureName(String title);
+
 	Page<Picture> findByTagsIn(Set<String> tags, Pageable pageable);
 
 	Page<Picture> findAllByOrderByDateDesc(Pageable pageable);
