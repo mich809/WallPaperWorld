@@ -17,16 +17,16 @@ import com.CaridadMichael.WallPaperWorld.model.Picture;
 public interface PictureRepository extends PagingAndSortingRepository<Picture, Long> {
 
 	@Modifying
-	@Query(nativeQuery = true, value = "UPDATE Picture  set view_count = view_count + 1 WHERE id = :id")
-	void increaseViewCount(@Param("id") Long id);
+	@Query(nativeQuery = true, value = "UPDATE Picture  set view_count = view_count + 1 WHERE picture_name = :pictureName")
+	void increaseViewCount(@Param("pictureName") String title);
 
 	@Modifying
 	@Query(nativeQuery = true, value = "UPDATE Picture  set favorites = favorites + 1 WHERE id = :id")
 	void increaseFavoriteCount(@Param("id") Long id);
 
 	@Modifying
-	@Query(nativeQuery = true, value = "UPDATE Picture  set favorites = favorites - 1 WHERE id = :id")
-	void decreaseFavoriteCount(@Param("id") Long id);
+	@Query(nativeQuery = true, value = "UPDATE Picture  set favorites = favorites - 1 WHERE picture_name = :pictureName")
+	void decreaseFavoriteCount(@Param("pictureName") String title);
 
 	Picture getPictureByPictureName(String title);
 
