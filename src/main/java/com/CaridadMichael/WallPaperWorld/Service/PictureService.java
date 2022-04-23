@@ -55,6 +55,7 @@ public class PictureService {
 	}
 
 	public PictureDTO getPictureDetails(String title) {
+		increaseViewCount(title);
 		Picture savedPicture = pictureRepository.getPictureByPictureName(title);
 		PictureDTO pictureDTO = new PictureDTO();
 		pictureDTO.setUrl(savedPicture.getPictureUrl());
@@ -67,9 +68,8 @@ public class PictureService {
 
 	}
 
-	public void increaseViewCount(long id) {
-		pictureRepository.increaseViewCount(id);
-		;
+	public void increaseViewCount(String title) {
+		pictureRepository.increaseViewCount(title);
 
 	}
 
