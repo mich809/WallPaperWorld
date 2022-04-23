@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -48,16 +47,10 @@ public class PictureController {
 		return pictureService.getPictureDetails(title);
 	}
 
-	@PutMapping("/increaseViewCount")
-	@ResponseStatus(HttpStatus.OK)
-	public void increaseViewCount(@RequestParam long pictureId) {
-		pictureService.increaseViewCount(pictureId);
-	}
-
 	@GetMapping("/getPicturesByTag")
 	@ResponseStatus(HttpStatus.OK)
 	public @ResponseBody Page<Picture> getPicturesByTag(@RequestParam Set<String> tags, @RequestParam int pageNumber) {
-		Pageable pageable = PageRequest.of(pageNumber, 2);
+		Pageable pageable = PageRequest.of(pageNumber, 20);
 		return pictureService.searchByTag(tags, pageable);
 	}
 
