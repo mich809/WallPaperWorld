@@ -74,9 +74,9 @@ public class UserService {
 
 	}
 
-	public void addToFavorites(String username, long pictureID) {
+	public void addToFavorites(String username, String pictureName) {
 		AppUser appUser = getUserByUsername(username);
-		Picture picture = getPictureByID(pictureID);
+		Picture picture = getPictureByName(pictureName);
 		picture.setFavorites(picture.getFavorites() + 1);
 		appUser.addPicture(picture);
 
@@ -85,9 +85,9 @@ public class UserService {
 
 	}
 
-	public void removeFromFavorites(String username, long pictureID) {
+	public void removeFromFavorites(String username, String pictureName) {
 		AppUser appUser = getUserByUsername(username);
-		Picture picture = getPictureByID(pictureID);
+		Picture picture = getPictureByName(pictureName);
 		picture.setFavorites(picture.getFavorites() - 1);
 		appUser.removePicture(picture);
 
@@ -97,19 +97,29 @@ public class UserService {
 	}
 
 	public Iterable<Picture> getFavorites(String username) {
-		AppUser appUser = getUserByUsername(username);
-		return appUser.getFavoritePictures();
+		return getUserByUsername(username).getFavoritePictures();
 
 	}
 
-	public AppUser getUserByUsername(String username) {
+	private AppUser getUserByUsername(String username) {
 		return userRepo.findByUsername(username)
 				.orElseThrow(() -> new IllegalArgumentException("Cannot find username: " + username));
 	}
 
-	private Picture getPictureByID(long id) {
-		return pictureRepo.findById(id)
-				.orElseThrow(() -> new IllegalArgumentException("Cannot find picture by id: " + id));
+	private Picture getPictureByName(String name) {
+		return pictureRepo.getPictureByPictureName(name);
+	}
+
+	public UserDTO getUserInfo(String name) {
+		UserDTO user = new UserDTO();
+		user.setPassword("");
+		user.setUsername(name);
+		user.setFavoritePicsCount(getUserByUsername(name).getFavoritePictures().size());
+		user.setUploadedPicsCount(getUserByUsername(name).getPictures().size());
+		user.setFavoritePictures(getUserByUsername(name).getFavoritePictures());
+		user.setPictures(getUserByUsername(name).getPictures());
+
+		return user;
 	}
 
 }
