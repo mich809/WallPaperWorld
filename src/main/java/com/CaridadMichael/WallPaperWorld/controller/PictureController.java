@@ -57,15 +57,22 @@ public class PictureController {
 	@GetMapping("/getRandomPictures")
 	@ResponseStatus(HttpStatus.OK)
 	public @ResponseBody Page<Picture> getRandomPictures(@RequestParam int pageNumber) {
-		Pageable pageable = PageRequest.of(pageNumber, 2);
+		Pageable pageable = PageRequest.of(pageNumber, 20);
 		return pictureService.getRandomPictures(pageable);
 	}
 
 	@GetMapping("/getPicturesByDate")
 	@ResponseStatus(HttpStatus.OK)
 	public @ResponseBody Page<Picture> getPicturesByDate(@RequestParam int pageNumber) {
-		Pageable pageable = PageRequest.of(pageNumber, 2);
+		Pageable pageable = PageRequest.of(pageNumber, 20);
 		return pictureService.getPicturesByDate(pageable);
+	}
+
+	@GetMapping("/getPicturesByFavorites")
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Page<Picture> getPicturesByFavorites(@RequestParam int pageNumber) {
+		Pageable pageable = PageRequest.of(pageNumber, 20);
+		return pictureService.getPicturesByFavorite(pageable);
 	}
 
 	@GetMapping("/homePictures")
