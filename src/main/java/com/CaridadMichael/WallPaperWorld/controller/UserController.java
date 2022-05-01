@@ -3,7 +3,7 @@ package com.CaridadMichael.WallPaperWorld.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.CaridadMichael.WallPaperWorld.Service.UserService;
 import com.CaridadMichael.WallPaperWorld.dto.UserDTO;
-import com.CaridadMichael.WallPaperWorld.model.AppUser;
 import com.CaridadMichael.WallPaperWorld.model.Picture;
 import com.CaridadMichael.WallPaperWorld.utils.AuthenticationResponse;
 
@@ -43,28 +42,34 @@ public class UserController {
 	}
 
 	@PutMapping("/AddToFavorites")
-	public void addToFavorites(@AuthenticationPrincipal(expression = "username") String username,
-			@RequestParam long pictureID) {
-		userService.addToFavorites(username, pictureID);
+	public void addToFavorites(@CurrentSecurityContext(expression = "authentication.name") String username,
+			@RequestParam String pictureName) {
+		userService.addToFavorites(username, pictureName);
 
 	}
 
 	@PutMapping("/removeFromFavorites")
-	public void removeFromFavorites(@AuthenticationPrincipal(expression = "username") String username,
-			@RequestParam long pictureID) {
-		userService.removeFromFavorites(username, pictureID);
+	public void removeFromFavorites(@CurrentSecurityContext(expression = "authentication.name") String username,
+			@RequestParam String pictureName) {
+		userService.removeFromFavorites(username, pictureName);
 
 	}
 
-	@GetMapping("/getUser")
-	public AppUser getUser(@RequestParam String username) {
-		return userService.getUserByUsername(username);
-
-	}
+//	@GetMapping("/getUser")
+//	public AppUser getUser(@RequestParam String username) {
+//		return userService.getUserByUsername(username);
+//
+//	}
 
 	@GetMapping("/getFavorites")
 	public @ResponseBody Iterable<Picture> getFavorites(@RequestParam String username) {
 		return userService.getFavorites(username);
+
+	}
+
+	@GetMapping("/getUserInfo")
+	public UserDTO getUserInfo(@CurrentSecurityContext(expression = "authentication.name") String username) {
+		return userService.getUserInfo(username);
 
 	}
 
