@@ -68,7 +68,7 @@ public class PictureService {
 
 	}
 
-	public void increaseViewCount(String title) {
+	private void increaseViewCount(String title) {
 		pictureRepository.increaseViewCount(title);
 
 	}
@@ -92,6 +92,11 @@ public class PictureService {
 
 	public List<Picture> getFrontPagePictures() {
 		return pictureRepository.getFrontPagePictures();
+	}
+
+	public Page<Picture> getPicturesByFavorite(Pageable pageable) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
