@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.CaridadMichael.WallPaperWorld.config.CustomUserDetailsService;
+import com.CaridadMichael.WallPaperWorld.dto.PageInfoDTO;
 import com.CaridadMichael.WallPaperWorld.dto.UserDTO;
 import com.CaridadMichael.WallPaperWorld.model.AppUser;
 import com.CaridadMichael.WallPaperWorld.model.Picture;
@@ -138,6 +139,17 @@ public class UserService {
 		user.setDate(appUser.getDate());
 
 		return user;
+	}
+
+	public PageInfoDTO getPageInfo() {
+		// TODO Auto-generated method stub
+		int pictureCount = (int) pictureRepo.count();
+		int userCount = (int) userRepo.count();
+		int viewCount = pictureRepo.getViewsAmount();
+		int tagCount = pictureRepo.getTagsAmount();
+
+		return new PageInfoDTO(userCount, viewCount, pictureCount, tagCount);
+
 	}
 
 }

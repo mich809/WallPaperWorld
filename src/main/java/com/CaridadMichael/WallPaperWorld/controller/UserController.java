@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CaridadMichael.WallPaperWorld.Service.UserService;
+import com.CaridadMichael.WallPaperWorld.dto.PageInfoDTO;
 import com.CaridadMichael.WallPaperWorld.dto.UserDTO;
 import com.CaridadMichael.WallPaperWorld.utils.AuthenticationResponse;
 
@@ -56,6 +57,12 @@ public class UserController {
 	@GetMapping("/getUserInfo")
 	public UserDTO getUserInfo(@CurrentSecurityContext(expression = "authentication.name") String username) {
 		return userService.getUserInfo(username);
+
+	}
+
+	@GetMapping("/getPageInfo")
+	public PageInfoDTO getPageInfo() {
+		return userService.getPageInfo();
 
 	}
 

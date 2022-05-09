@@ -48,6 +48,13 @@ public interface PictureRepository extends PagingAndSortingRepository<Picture, L
 	@Query(nativeQuery = true, value = "SELECT * FROM Picture WHERE approved = true Limit 12")
 	List<Picture> getFrontPagePictures();
 
+	@Query("SELECT sum(e.viewCount) from Picture e")
+	int getViewsAmount();
+
+	@Query(value = "SELECT count(t) FROM  Picture p INNER JOIN p.tags t")
+	int getTagsAmount();
+
 	@Modifying
 	void deleteByName(String name);
+
 }

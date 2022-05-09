@@ -44,9 +44,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().httpBasic().disable().cors().and().authorizeHttpRequests()
-				.antMatchers("/api/user/login", "/api/user/register", "/api/picture/**").permitAll()
-				.antMatchers("/api/picture/addPicture").authenticated().antMatchers(HttpHeaders.ALLOW).permitAll()
-				.antMatchers("/api/admin/**").hasAuthority("ROLE_Admin").anyRequest().authenticated().and()
+				.antMatchers("/api/user/login", "/api/user/register", "/api/user/getPageInfo", "/api/picture/**")
+				.permitAll().antMatchers("/api/picture/addPicture").authenticated().antMatchers(HttpHeaders.ALLOW)
+				.permitAll().antMatchers("/api/admin/**").hasAuthority("ROLE_Admin").anyRequest().authenticated().and()
 				.exceptionHandling()
 				.authenticationEntryPoint((request, response, authException) -> response
 						.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
