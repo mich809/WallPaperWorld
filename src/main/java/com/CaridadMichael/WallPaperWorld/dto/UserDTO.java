@@ -1,5 +1,6 @@
 package com.CaridadMichael.WallPaperWorld.dto;
 
+import java.util.Date;
 import java.util.Set;
 
 import com.CaridadMichael.WallPaperWorld.model.Picture;
@@ -18,4 +19,7 @@ public class UserDTO {
 	private int favoritePicsCount;
 	private Set<Picture> favoritePictures;
 	private Set<Picture> pictures;
+
+	private Date date;
+
 }
