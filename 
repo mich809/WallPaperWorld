@@ -1,0 +1,84 @@
+[1mdiff --git a/src/main/java/com/CaridadMichael/WallPaperWorld/controller/PictureController.java b/src/main/java/com/CaridadMichael/WallPaperWorld/controller/PictureController.java[m
+[1mindex 9b7785c..066d553 100644[m
+[1m--- a/src/main/java/com/CaridadMichael/WallPaperWorld/controller/PictureController.java[m
+[1m+++ b/src/main/java/com/CaridadMichael/WallPaperWorld/controller/PictureController.java[m
+[36m@@ -1,21 +1,27 @@[m
+ package com.CaridadMichael.WallPaperWorld.controller;[m
+ [m
+[32m+[m
+[32m+[m
+[32m+[m[32mimport java.util.Set;[m
+[32m+[m
+ import org.springframework.beans.factory.annotation.Autowired;[m
+ import org.springframework.http.HttpStatus;[m
+[32m+[m[32mimport org.springframework.security.core.annotation.CurrentSecurityContext;[m
+ import org.springframework.web.bind.annotation.GetMapping;[m
+ [m
+ import org.springframework.web.bind.annotation.PostMapping;[m
+ import org.springframework.web.bind.annotation.PutMapping;[m
+[31m-import org.springframework.web.bind.annotation.RequestBody;[m
+ import org.springframework.web.bind.annotation.RequestMapping;[m
+ import org.springframework.web.bind.annotation.RequestParam;[m
+[32m+[m[32mimport org.springframework.web.bind.annotation.ResponseBody;[m
+ import org.springframework.web.bind.annotation.ResponseStatus;[m
+ import org.springframework.web.bind.annotation.RestController;[m
+ import org.springframework.web.multipart.MultipartFile;[m
+ [m
+ import com.CaridadMichael.WallPaperWorld.Service.PictureService;[m
+ import com.CaridadMichael.WallPaperWorld.dto.PictureDTO;[m
+[31m-import com.CaridadMichael.WallPaperWorld.dto.uploadPictureResponse;[m
+[32m+[m
+[32m+[m[32mimport com.CaridadMichael.WallPaperWorld.model.Picture;[m
+ [m
+ import lombok.RequiredArgsConstructor;[m
+ [m
+[36m@@ -30,22 +36,40 @@[m [mpublic class PictureController {[m
+ 	[m
+ 	@PostMapping("/addPicture")[m
+ 	@ResponseStatus(HttpStatus.CREATED)[m
+[31m-	public uploadPictureResponse uploadPicture(@RequestParam("fileName") String fileName,@RequestParam("file") MultipartFile file) {[m
+[31m-		return pictureService.uploadPicture(fileName, file);[m
+[32m+[m	[32mpublic Picture uploadPicture(@RequestParam("picture name") String pictureName,@RequestParam("file") MultipartFile file, @CurrentSecurityContext(expression="authentication.name")String username,@RequestParam("tags") Set<String> pictureTags ) {[m
+[32m+[m		[32mreturn pictureService.uploadPicture(pictureName, file,username,pictureTags);[m
+ 		[m
+[32m+[m	[32m}[m[41m	[m
+[32m+[m
+[32m+[m[41m	[m
+[32m+[m	[32m@GetMapping("/getPictureDetails")[m
+[32m+[m	[32m@ResponseStatus(HttpStatus.OK)[m
+[32m+[m	[32mpublic PictureDTO getPictureDetails(@RequestParam long pictureId) {[m
+[32m+[m		[32mreturn pictureService.getPictureDetails(pictureId);[m
+ 	}[m
+ 	[m
+[31m-	@PutMapping("/updatePicture")[m
+[32m+[m	[32m@GetMapping("/getPictures")[m
+ 	@ResponseStatus(HttpStatus.OK)[m
+[31m-	public PictureDTO editPicture(@RequestBody 	PictureDTO pictureDto) {[m
+[31m-		return pictureService.editPicture(pictureDto);[m
+[31m-		[m
+[32m+[m	[32mpublic @ResponseBody Iterable<Picture> getPictures() {[m
+[32m+[m	[32m   return pictureService.getAllPictures();[m
+ 	}[m
+ 	[m
+[31m-	@GetMapping("/getPictureDetails")[m
+[32m+[m	[32m@PutMapping("/increaseViewCount")[m
+ 	@ResponseStatus(HttpStatus.OK)[m
+[31m-	public PictureDTO getPictureDetails(@RequestParam long pictureId) {[m
+[31m-		return pictureService.getPictureDetails(pictureId);[m
+[32m+[m	[32mpublic void increaseViewCount (@RequestParam long pictureId) {[m
+[32m+[m	[32m   pictureService.increaseViewCount(pictureId);[m
+[32m+[m	[32m}[m
+[32m+[m[41m	[m
+[32m+[m	[32m@GetMapping("/getPicturesByTag")[m
+[32m+[m	[32m@ResponseStatus(HttpStatus.OK)[m
+[32m+[m	[32mpublic @ResponseBody Iterable<Picture> getPicturesByTag(@RequestParam Set<String> tags) {[m
+[32m+[m	[32m   return pictureService.searchByTag(tags);[m
+ 	}[m
+[32m+[m[41m	[m
+[32m+[m[41m	[m
+[32m+[m[41m	[m
+[32m+[m[41m	[m
+[32m+[m[41m	[m
+[32m+[m
+ [m
+ }[m
