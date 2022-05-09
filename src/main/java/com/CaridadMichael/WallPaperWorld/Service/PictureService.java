@@ -31,7 +31,7 @@ public class PictureService {
 	private final S3StorageService s3Service;
 
 	@Autowired
-	private final PictureRepository pictureRepository;
+	private final PictureRepository pictureRepo;
 
 	public Picture uploadPicture(MultipartFile multipartFile, String username, Set<String> pictureTags) {
 
@@ -41,14 +41,14 @@ public class PictureService {
 		AppUser user = getUserByUsername(username);
 		var picture = new Picture();
 		picture.setPictureUrl(s3Service.uploadPicture(key, multipartFile));
-		picture.setPictureName(key.substring(0, 8));
+		picture.setName(key.substring(0, 8));
 		picture.setUploadedBy(username);
 		picture.setFavorites(0);
 		picture.setViewCount(0);
 		picture.setTags(pictureTags);
 		picture.setUser(user);
 		user.uploadedPictures(picture);
-		pictureRepository.save(picture);
+		pictureRepo.save(picture);
 
 		return picture;
 
@@ -56,29 +56,30 @@ public class PictureService {
 
 	public PictureDTO getPictureDetails(String title) {
 		increaseViewCount(title);
-		Picture savedPicture = pictureRepository.getPictureByPictureName(title);
+		Picture picture = pictureRepo.getPictureByName(title)
+				.orElseThrow(() -> new IllegalArgumentException("Cannot find picture: " + title));
 		PictureDTO pictureDTO = new PictureDTO();
-		pictureDTO.setUrl(savedPicture.getPictureUrl());
-		pictureDTO.setTags(savedPicture.getTags());
-		pictureDTO.setFavorites(savedPicture.getFavorites());
-		pictureDTO.setUploadedBy(savedPicture.getUploadedBy());
-		pictureDTO.setViewCount(savedPicture.getViewCount());
+		pictureDTO.setUrl(picture.getPictureUrl());
+		pictureDTO.setTags(picture.getTags());
+		pictureDTO.setFavorites(picture.getFavorites());
+		pictureDTO.setUploadedBy(picture.getUploadedBy());
+		pictureDTO.setViewCount(picture.getViewCount());
+//		pictureDTO.setFavoritedByUser(true);
 
 		return pictureDTO;
-
 	}
 
 	private void increaseViewCount(String title) {
-		pictureRepository.increaseViewCount(title);
+		pictureRepo.increaseViewCount(title);
 
 	}
 
 	public Page<Picture> searchByTag(Set<String> tags, Pageable pageable) {
-		return pictureRepository.findByTagsIn(tags, pageable);
+		return pictureRepo.findByTagsIn(tags, pageable);
 	}
 
 	public Page<Picture> getRandomPictures(Pageable pageable) {
-		return pictureRepository.getRandomPictures(pageable);
+		return pictureRepo.getRandomPictures(pageable);
 	}
 
 	private AppUser getUserByUsername(String username) {
@@ -87,16 +88,15 @@ public class PictureService {
 	}
 
 	public Page<Picture> getPicturesByDate(Pageable pageable) {
-		return pictureRepository.findAllByOrderByDateDesc(pageable);
+		return pictureRepo.findAllByOrderByDateDesc(pageable);
 	}
 
 	public List<Picture> getFrontPagePictures() {
-		return pictureRepository.getFrontPagePictures();
+		return pictureRepo.getFrontPagePictures();
 	}
 
 	public Page<Picture> getPicturesByFavorite(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
+		return pictureRepo.findAllByfavorites(pageable);
 	}
 
 }
