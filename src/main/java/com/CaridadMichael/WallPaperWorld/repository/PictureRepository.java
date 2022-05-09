@@ -1,6 +1,7 @@
 package com.CaridadMichael.WallPaperWorld.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -17,26 +18,36 @@ import com.CaridadMichael.WallPaperWorld.model.Picture;
 public interface PictureRepository extends PagingAndSortingRepository<Picture, Long> {
 
 	@Modifying
-	@Query(nativeQuery = true, value = "UPDATE Picture  set view_count = view_count + 1 WHERE picture_name = :pictureName")
+	@Query(nativeQuery = true, value = "UPDATE Picture  set view_count = view_count + 1 WHERE name = :pictureName")
 	void increaseViewCount(@Param("pictureName") String title);
 
 	@Modifying
-	@Query(nativeQuery = true, value = "UPDATE Picture  set favorites = favorites + 1 WHERE id = :id")
-	void increaseFavoriteCount(@Param("id") Long id);
+	@Query(nativeQuery = true, value = "UPDATE Picture  set favorites = favorites + 1 WHERE name = :pictureName")
+	void increaseFavoriteCount(@Param("pictureName") String title);
 
 	@Modifying
-	@Query(nativeQuery = true, value = "UPDATE Picture  set favorites = favorites - 1 WHERE picture_name = :pictureName")
+	@Query(nativeQuery = true, value = "UPDATE Picture  set favorites = favorites - 1 WHERE name = :pictureName")
 	void decreaseFavoriteCount(@Param("pictureName") String title);
 
-	Picture getPictureByPictureName(String title);
+	Optional<Picture> getPictureByName(String name);
 
-	Page<Picture> findByTagsIn(Set<String> tags, Pageable pageable);
+	Page<Picture> findByTagsIn(@Param("tags") Set<String> tags, Pageable pageable);
 
+	@Query(nativeQuery = true, value = "SELECT * FROM Picture WHERE approved = true ORDER BY date desc ")
 	Page<Picture> findAllByOrderByDateDesc(Pageable pageable);
 
-	@Query(nativeQuery = true, value = "SELECT * FROM Picture ORDER BY random()")
+	@Query(nativeQuery = true, value = "SELECT * FROM Picture WHERE approved = true ORDER BY favorites desc")
+	Page<Picture> findAllByfavorites(Pageable pageable);
+
+	@Query(nativeQuery = true, value = "SELECT * FROM Picture WHERE approved = true ORDER BY random() ")
 	Page<Picture> getRandomPictures(Pageable pageable);
 
-	@Query(nativeQuery = true, value = "SELECT * FROM Picture Limit 12")
+	@Query(nativeQuery = true, value = "SELECT * FROM Picture WHERE approved = false")
+	Page<Picture> getPicturesNotApproved(Pageable pageable);
+
+	@Query(nativeQuery = true, value = "SELECT * FROM Picture WHERE approved = true Limit 12")
 	List<Picture> getFrontPagePictures();
+
+	@Modifying
+	void deleteByName(String name);
 }
