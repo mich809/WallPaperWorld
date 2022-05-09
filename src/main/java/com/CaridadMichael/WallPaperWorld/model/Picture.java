@@ -3,7 +3,6 @@ package com.CaridadMichael.WallPaperWorld.model;
 import java.util.Date;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,24 +28,26 @@ import lombok.Setter;
 public class Picture {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@CreationTimestamp
 	private Date date;
 
-	private String pictureName;
+	private String name;
 	private String uploadedBy;
 
-	private Integer favorites;
+	private Integer favorites = 0;
 	private Integer viewCount;
 	private String pictureUrl;
+
+	private Boolean approved = false;
 
 	@ElementCollection(targetClass = String.class)
 	private Set<String> tags;
 
 	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "username", referencedColumnName = "username")
 	private AppUser user;
 
