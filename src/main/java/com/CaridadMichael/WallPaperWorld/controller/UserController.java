@@ -10,13 +10,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.CaridadMichael.WallPaperWorld.Service.UserService;
 import com.CaridadMichael.WallPaperWorld.dto.UserDTO;
-import com.CaridadMichael.WallPaperWorld.model.Picture;
 import com.CaridadMichael.WallPaperWorld.utils.AuthenticationResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -43,8 +41,8 @@ public class UserController {
 
 	@PutMapping("/AddToFavorites")
 	public void addToFavorites(@CurrentSecurityContext(expression = "authentication.name") String username,
-			@RequestParam String pictureName) {
-		userService.addToFavorites(username, pictureName);
+			@RequestParam String name) {
+		userService.addToFavorites(username, name);
 
 	}
 
@@ -52,18 +50,6 @@ public class UserController {
 	public void removeFromFavorites(@CurrentSecurityContext(expression = "authentication.name") String username,
 			@RequestParam String pictureName) {
 		userService.removeFromFavorites(username, pictureName);
-
-	}
-
-//	@GetMapping("/getUser")
-//	public AppUser getUser(@RequestParam String username) {
-//		return userService.getUserByUsername(username);
-//
-//	}
-
-	@GetMapping("/getFavorites")
-	public @ResponseBody Iterable<Picture> getFavorites(@RequestParam String username) {
-		return userService.getFavorites(username);
 
 	}
 
