@@ -16,6 +16,7 @@ public class PictureDTO {
 	private String uploadedBy;
 	private Integer favorites;
 	private Integer viewCount;
+	private boolean favoritedByUser;
 	@ElementCollection(targetClass = String.class)
 	private Set<String> tags;
 
